@@ -1,0 +1,12 @@
+---
+- firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items:
+    - "{{ cm_ports }}"
+
+- command: "/opt/splunk/bin/splunk edit cluster-config -mode master -replication_factor {{ replication_factor }} -search_factor {{ search_factor }} -secret {{ secret }} -cluster_label {{ cluster_label }} -auth {{ user_name }}:{{ password }}"
+  become_user: splunk
+  ignore_errors: true

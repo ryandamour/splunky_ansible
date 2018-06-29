@@ -1,0 +1,37 @@
+---
+- stat:
+    path: /opt/splunk
+  register: splunk_installed
+- stat:
+    path: /etc/init.d/splunk
+  register: splunk_init_installed
+- copy:
+    src: files/{{ splunk_version }}.rpm 
+    dest: /usr/local/src/{{ splunk_version }}.rpm
+  when: splunk_installed.stat.exists == False 
+- yum:
+    name: /usr/local/src/{{ splunk_version }}.rpm
+    state: present
+  when: splunk_installed.stat.exists == False 
+- template:
+    src: templates/user-seed.conf.j2
+    dest: /opt/splunk/etc/system/local/user-seed.conf
+    owner: splunk
+    group: splunk
+  when: splunk_installed.stat.exists == False
+- shell: /opt/splunk/bin/splunk enable boot-start -user splunk --accept-license
+  when: splunk_init_installed.stat.exists == False
+- file:
+    path: /opt/splunk
+    owner: splunk
+    group: splunk
+- command: /opt/splunk/bin/splunk start
+  become_user: splunk
+- systemd:
+    name: splunk
+    state: started
+    enabled: yes
+- service:
+    name: "{{ firewall }}"
+    state: started
+    enabled: true

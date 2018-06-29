@@ -1,0 +1,4 @@
+---
+- name: restart_splunk
+  command: /opt/splunk/bin/splunk restart
+  become_user: splunk

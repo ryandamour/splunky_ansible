@@ -1,0 +1,20 @@
+---
+secret: "super_1337"
+user_name: "admin"
+password: "super_1337"
+cluster_label: "1337_setup" 
+site_name: "lab"
+search_factor: 2
+replication_factor: 2
+replication_port: 9998
+master_ip: "192.168.22.147"
+splunk_version: "splunk-7.1.1-8f0ead9ec3db-linux-2.6-x86_64"
+firewall: firewalld
+indexer_ports:
+  - 9997
+  - 8089
+  - 9998
+cm_ports:
+  - 8089
+sh_ports:
+  - 8000

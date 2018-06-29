@@ -1,0 +1,23 @@
+---
+- firewalld:
+    port: "{{ item }}/tcp"
+    permanent: true
+    state: enabled
+    immediate: yes
+  with_items:
+    - "{{ sh_ports }}"
+
+- blockinfile:
+    path: /opt/splunk/etc/system/local/server.conf
+    marker: "### {mark} Managed by Ansible ###"
+    content: |
+      [clustering]
+      multisite = false
+      master_uri = clustermaster:{{ site_name }} 
+      mode = searchhead
+
+      [clustermaster:{{ site_name }}]
+      multisite = true
+      pass4SymmKey = {{ secret }} 
+      master_uri = https://{{ master_ip }}:8089 
+  notify: restart_splunk
