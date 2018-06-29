@@ -7,6 +7,12 @@
   with_items:
     - "{{ cm_ports }}"
 
-- command: "/opt/splunk/bin/splunk edit cluster-config -mode master -replication_factor {{ replication_factor }} -search_factor {{ search_factor }} -secret {{ secret }} -cluster_label {{ cluster_label }} -auth {{ user_name }}:{{ password }}"
-  become_user: splunk
-  ignore_errors: true
+- blockinfile:
+    path: /opt/splunk/etc/system/local/server.conf
+    content:  |
+      [clustering]
+      cluster_label = {{ cluster_label }} 
+      mode = master
+      pass4SymmKey = {{ secret }} 
+      replication_factor = 2
+  notify: restart_splunk
